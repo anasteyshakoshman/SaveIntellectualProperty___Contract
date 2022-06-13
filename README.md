@@ -1,0 +1,2 @@
+# SaveIntellectualProperty___Contract
+Diploma project

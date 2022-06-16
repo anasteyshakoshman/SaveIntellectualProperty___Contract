@@ -98,8 +98,9 @@ contract SaveIntellectualProperty is ERC721Enumerable, Ownable {
         return ownerTokens;
     }
 
-    function setAuthorName(address author, string calldata name) payable public {
-        require(author != address(0), "SaveIntellctualProperty: author has null adress");
+    function setAuthorName(string calldata name) payable public {
+        address author = _msgSender();
+
         require(keccak256(bytes(name)) != keccak256(bytes(authorsNames[author])), "SaveIntellectualProperty: name the same");
 
         authorsNames[author] = name;
@@ -111,8 +112,9 @@ contract SaveIntellectualProperty is ERC721Enumerable, Ownable {
         return authorsNames[author];
     }
 
-    function setAuthorDescription(address author, string calldata description) payable public {
-        require(author != address(0), "SaveIntellctualProperty: author has null adress");
+    function setAuthorDescription(string calldata description) payable public {
+        address author = _msgSender();
+
         require(keccak256(bytes(description)) != keccak256(bytes(authorsDescriptions[author])), "SaveIntellectualProperty: description the same");
 
         authorsDescriptions[author] = description;

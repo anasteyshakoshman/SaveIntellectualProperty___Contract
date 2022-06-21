@@ -32,7 +32,7 @@ describe("Save Intellectual Property contract", () => {
 
   it("Should mint", async () => {
     expect(
-        await contract.registerNewToken(tokenUnicalIdentifier, ownerAddress)
+        await contract.registerNewToken(tokenUnicalIdentifier)
     ).to.emit(contract, "Transfer").withArgs(ethers.constants.AddressZero, ownerAddress, 1);  
   });
 

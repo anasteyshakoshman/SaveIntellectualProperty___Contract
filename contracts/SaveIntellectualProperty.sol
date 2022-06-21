@@ -21,7 +21,7 @@ contract SaveIntellectualProperty is ERC721Enumerable, Ownable {
     // Mapping from author address to tokens list
     mapping(address => uint256[]) private tokensByAuthor;
 
-    // Mapping from author address to tokens list
+    // Mapping from owner address to tokens list
     mapping(address => uint256[]) private tokensByOwner;
 
     // Mapping from author address to his name
@@ -53,23 +53,27 @@ contract SaveIntellectualProperty is ERC721Enumerable, Ownable {
         return super.ownerOf(tokenId);
     }
 
-    function registerNewToken(string calldata identifier, address author) payable public {
-        require(author != address(0), "SaveIntellctualProperty: author has null adress");
+    function registerNewToken(string calldata identifier) public {
         require(tokenIdByIdentifier[identifier] == 0, "SaveIntellectualProperty: token with given identifier was register");
         
         // Count new token id
         uint256 tokenId = ERC721Enumerable.totalSupply() + 1;
+
+        // Author address
+        address author = _msgSender();
         
         // Save authors data
         authors[tokenId] = author;
+
         // Save relation between token id and identifier
         tokenIdByIdentifier[identifier] = tokenId;
         identifierByTokenId[tokenId] = identifier;
 
-        // Decrease total quantity of authors
+        // Increase total quantity of authors
         if (tokensByAuthor[author].length == 0) {
             totalCountAuthors++;
         }
+
         // Refill list tokens by author and owner
         tokensByAuthor[author].push(tokenId);
         tokensByOwner[author].push(tokenId);
@@ -78,10 +82,8 @@ contract SaveIntellectualProperty is ERC721Enumerable, Ownable {
         _safeMint(author, tokenId);
     }
 
-    function getTokensByAuthor(address author) public view returns (uint256[] memory) {
-        require(author != address(0), "SaveIntellectualProperty: empty address");
-
-        uint256[] memory authorTokens = tokensByAuthor[author];
+    function getRegisteredTokens() public view returns (uint256[] memory) {
+        uint256[] memory authorTokens = tokensByAuthor[_msgSender()];
 
         require(authorTokens.length != 0, "SaveIntellectualProperty: this author was not registered");
 
@@ -98,7 +100,7 @@ contract SaveIntellectualProperty is ERC721Enumerable, Ownable {
         return ownerTokens;
     }
 
-    function setAuthorName(string calldata name) payable public {
+    function setAuthorName(string calldata name) public {
         address author = _msgSender();
 
         require(keccak256(bytes(name)) != keccak256(bytes(authorsNames[author])), "SaveIntellectualProperty: name the same");
@@ -112,7 +114,7 @@ contract SaveIntellectualProperty is ERC721Enumerable, Ownable {
         return authorsNames[author];
     }
 
-    function setAuthorDescription(string calldata description) payable public {
+    function setAuthorDescription(string calldata description) public {
         address author = _msgSender();
 
         require(keccak256(bytes(description)) != keccak256(bytes(authorsDescriptions[author])), "SaveIntellectualProperty: description the same");
@@ -124,6 +126,11 @@ contract SaveIntellectualProperty is ERC721Enumerable, Ownable {
         require(author != address(0), "SaveIntellctualProperty: author has null adress");
 
         return authorsDescriptions[author];
+    }
+
+    function setAuthorData(string calldata name, string calldata description) public {
+        setAuthorName(name);
+        setAuthorDescription(description);
     }
 
     function getImageIdentifier(uint256 tokenId) public view returns (string memory) {

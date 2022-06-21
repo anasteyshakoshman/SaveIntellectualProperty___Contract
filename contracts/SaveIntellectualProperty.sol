@@ -109,7 +109,7 @@ contract SaveIntellectualProperty is ERC721Enumerable, Ownable {
     }
 
     function getAuthorName(address author) public view returns (string memory) {
-        require(author != address(0), "SaveIntellctualProperty: author has null adress");
+        require(author != address(0), "SaveIntellctualProperty: author has null address");
 
         return authorsNames[author];
     }
